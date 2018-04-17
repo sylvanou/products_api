@@ -98,7 +98,7 @@ class Product {
          return json_encode($results);
     }
 
-    public function update() {
+    public function update($id) {
 
         // update product based on id
         $query = "UPDATE products
@@ -123,7 +123,27 @@ class Product {
         $stmt->bindParam(':category_id', $category_id);
         $stmt->bindParam(':id', $id);
 
-        if ($stmt->exeute()) {
+        if ($stmt->execute()) {
+            return true;
+        }  else {
+            return false;
+        }
+    }
+
+    public function delete($id) {
+        
+        // query to delete a product from the db 
+        $query = "DELETE FROM products WHERE id=:id";
+
+        $stmt = $this->conn->prepare($query);
+
+        // sanitize
+        $id = htmlspecialchars(strip_tags($id));
+
+        // bind the parameter
+        $stmt->bindParam(':id', $id);
+
+        if ($stmt->execute()) {
             return true;
         }  else {
             return false;
