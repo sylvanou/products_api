@@ -1,15 +1,15 @@
 <?php
 // if the form was submitted
-if($_POST) {
+if ($_POST) {
 
     // include core configuration
-    include_once('../config/core.php');
+    include_once('../../config/core.php');
 
     // include database connection
-    include_once('../config/database.php');
+    include_once('../../config/database.php');
 
     // product object
-    include_once('../objects/product.php');
+    include_once('../../objects/product.php');
 
     // create class instance of database
     $database = new Database();
@@ -21,8 +21,9 @@ if($_POST) {
     $product->price = $_POST['price'];
     $product->description = $_POST['description'];
     $product->category_id = $_POST['category_id'];
+    $product->id = $_POST['id'];
     
     // create the product
-    echo $product->create() ? "true" : "false";
+    echo $product->update($id) ? "true" : "false";
 }
 
