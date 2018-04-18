@@ -16,9 +16,11 @@ if ($_POST) {
     $db = $database->getConnection();
     $category = new Category($db);
 
-    $id = $_POST['del_id'];
-
-    echo $category->delete($id) ? "true" : "false";
-
+    // set category property values
+    $category->name = $_POST['name'];
+    $category->description = $_POST['description'];
+    
+    // create the category
+    echo $category->create() ? "true" : "false";
 }
 
