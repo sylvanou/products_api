@@ -9,16 +9,16 @@ if ($_POST) {
     include_once('../../config/database.php');
 
     // product object
-    include_once('../../objects/product.php');
+    include_once('../../objects/category.php');
 
     // create class instance of database
     $database = new Database();
     $db = $database->getConnection();
-    $product = new Product($db);
+    $category = new Category($db);
 
     $id = $_POST['del_id'];
 
-    echo $product->delete($id) ? "true" : "false";
+    echo $category->delete($id) ? "true" : "false";
 
 }
 
