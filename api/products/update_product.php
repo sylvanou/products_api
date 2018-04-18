@@ -24,6 +24,6 @@ if ($_POST) {
     $product->id = $_POST['id'];
     
     // create the product
-    echo $product->update($id) ? "true" : "false";
+    echo $product->update($product->id) ? "true" : "false";
 }
 

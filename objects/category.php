@@ -9,6 +9,7 @@ class Category
     public $id;
     public $name;
     public $description;
+    public $timestamp;
 
 
     public function __construct($db)
@@ -21,8 +22,8 @@ class Category
         try {
             
             // insert query
-            $query = "INSERT INTO categories
-                SET name=:name, description=:description, created=:created";
+            $query = "INSERT INTO " . $this->table_name .
+                     " SET name=:name, description=:description, created=:created";
 
             // prepare statement
             $stmt = $this->conn->prepare($query);
@@ -96,10 +97,10 @@ class Category
     public function update($id)
     {
 
-        // update product based on id
-        $query = "UPDATE categories
-                    SET name=:name, description=:description,
-                WHERE id=:id";
+        // update category based on id
+        $query = "UPDATE categories 
+        SET name=:name, description=:description 
+                 WHERE id=:id";
 
         // prepare statement
         $stmt = $this->conn->prepare($query);
