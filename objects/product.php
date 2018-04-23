@@ -61,7 +61,7 @@ class Product {
     public function readAll() {
         
         // select all data
-        $query = "SELECT p.id, p.name, p.description, p.category_id, c.name as category_name 
+        $query = "SELECT p.id, p.name, p.description, p.category_id, p.price, c.name as category_name 
          FROM " . $this->table_name . " p
          LEFT JOIN categories c 
          ON p.category_id = c.id
@@ -75,7 +75,7 @@ class Product {
        return json_encode($results);
     }
 
-    public function readOne() {
+    public function readOne($id) {
 
         // select the data
         $query = "SELECT p.id, p.name, p.description, p.price, c.name as category_name 
@@ -88,7 +88,7 @@ class Product {
          $stmt = $this->conn->prepare($query);
 
          // sanitize id with htmlspecialchars
-         $id = htmlspecialchars(strip_tags($this->id));
+         $id = htmlspecialchars(strip_tags($id));
          $stmt->bindParam(':id', $id);
 
          $stmt->execute();

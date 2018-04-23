@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Category Manager</title>
+</head>
+<link rel="stylesheet" href="https://bootswatch.com/4/minty/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Category Manager</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="./index.html">Products
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="./categories.html">Categories
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Trigger the modal with a button -->
+    
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+    
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Category</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="description" class="form-control"></textarea>
+                        </div>
+                        <input type="submit" value="submit" class="btn btn-primary">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+    
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Categories</h1>
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add Category</button>
+        <ul id="items" class="container mt-4">
+            <li class="row">
+                <strong class="col border">Name</strong>
+                <strong class="col border">Description</strong>
+                <strong class="col border">Edit/Delete</strong>
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js" integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // getItems();
+
+            //Submit event
+            $('#categoryForm').on('submit', function (e) {
+                e.preventDefault();
+
+                let name = $('#name').val();
+                let description = $('#description').val();
+                let price = $('#price').val();
+                let id = $('#id').val();
+
+                addItem(name, description, id);
+            });
+
+            // Insert products using API
+            function addItem(name, description, id) {
+                $.ajax({
+                    method: 'POST',
+                    url: 'http://localhost/products_api/api/categories/create_category.php',
+                    data: {
+                        name: name,
+                        description: description,
+                        id: id
+                    }
+                }).done(function (item) {
+                    console.log(item);
+                    alert(`Category ${name} was added.`);
+                    location.reload();
+                })
+            }
+
+            // Delete event
+            $('body').on('click', '.deleteLink', function (e) {
+                e.preventDefault();
+                let id = $(this).attr('id');
+
+                deleteCategory(id);
+                // console.log(id);
+            });
+
+            // Delete Category through api
+            function deleteCategory(id) {
+                $.post('http://localhost/products_api/api/categories/delete_category.php', {
+                    del_id: id
+                }).done(function (item) {
+                    alert(`Category Removed.`);
+                    location.reload();
+                });
+            }
+
+            //Submit event
+            $('body').on('submit', '#itemForm', function (e) {
+                e.preventDefault();
+
+                let data = $(this).parent()["0"].children.itemForm;
+                console.log(data);
+                let name = data["0"].value;
+                let description = data["1"].value;
+                let id = data["2"].value;
+
+                updateCategory(name, description, id);
+            });
+
+            // Insert Categorys using API
+            function updateCategory(name, description, id) {
+                console.log(name, description, id);
+                $.ajax({
+                    method: 'POST',
+                    url: 'http://localhost/products_api/api/categories/update_category.php',
+                    data: {
+                        name: name,
+                        description: description,
+                        id: id
+                    },
+                    dataType: "json"
+                }).done(function (item) {
+                    // console.log(item);
+                    alert(`Category ${name} was updated.`);
+                    location.reload();
+                })
+            }
+
+            getItems();
+
+            //Get items from API
+            function getItems() {
+                $.ajax({
+                    url: 'http://localhost/products_api/api/categories/read_all_categories.php'
+                }).done(function (items) {
+                    // console.log(items);
+                    let output = '';
+                    $.each(JSON.parse(items), function (key, item) {
+                        // console.log(item)
+                        output += `
+                            <li class="row">
+                                <div class="col border">${item['name']}</div>
+                                <div class="col border">${item['description']}</div>
+                                <div class="col border">
+                                    <button class="editLink btn btn-primary" id="${item['id']}"
+                                        data-toggle="modal" data-target="#modal-${item['id']}">Edit</button>
+                                    <a href="#" class="deleteLink btn btn-danger" id="${item['id']}">Delete</a>
+                                </div>
+                            
+                            <!-- Trigger the modal with a button -->
+
+                                <!-- Modal -->
+                                <div id="modal-${item['id']}" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
+
+                                    <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title text-center">Edit Category</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form method="POST" id="itemForm">
+                                                    <div class="form-group">
+                                                        <label>Name</label>
+                                                        <input type="text" id="name" class="form-control" value="${item['name']}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Description</label>
+                                                        <textarea id="description" class="form-control">${item['description']}</textarea>
+                                                    </div>
+                                                    <input type="hidden" id="id" value="${item['id']}">
+                                                    <input type="submit" id="modal-form" value="submit" class="btn btn-primary">
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
+                    });
+                    $('#items').append(output);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
